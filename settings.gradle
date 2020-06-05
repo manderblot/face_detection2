@@ -1,0 +1,2 @@
+rootProject.name='face_detection2'
+include ':app', 'opencvsdk'
