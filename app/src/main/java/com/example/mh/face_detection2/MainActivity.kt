@@ -15,6 +15,9 @@ import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
 import java.io.*
 import java.util.*
+import android.view.Menu
+import android.view.MenuItem
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListener2  {
 
@@ -30,6 +33,8 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
                     log_d("OpenCV loaded successfully")
                     System.loadLibrary("detection_based_tracker")
                     setupDetector()
+                    val idc = cameraViewList
+                    mOpenCvCameraView.setCameraIndex(0)
                     mOpenCvCameraView.enableView()
                 }
                 else -> {
@@ -49,6 +54,19 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         mOpenCvCameraView.visibility = CameraBridgeViewBase.VISIBLE
         mOpenCvCameraView.setCvCameraViewListener(this)
 
+        button_options.setOnClickListener {
+            val snackbar = Snackbar.make(it,"",Snackbar.LENGTH_SHORT)
+            snackbar.duration = 10000
+            snackbar.setAction("yes",View.OnClickListener {
+                if (mOpenCvCameraView.id == 0) {
+                    mOpenCvCameraView.setCameraIndex(1)
+                } else {
+                    mOpenCvCameraView.setCameraIndex(0)
+                }
+                snackbar.dismiss()
+            })
+            snackbar.show()
+        }
     }
 
     override fun onPause() {
