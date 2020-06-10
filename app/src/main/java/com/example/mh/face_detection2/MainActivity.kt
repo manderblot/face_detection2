@@ -30,11 +30,8 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         override fun onManagerConnected(status: Int) {
             when (status) {
                 LoaderCallbackInterface.SUCCESS -> {
-                    log_d("OpenCV loaded successfully")
                     System.loadLibrary("detection_based_tracker")
                     setupDetector()
-                    val idc = cameraViewList
-                    mOpenCvCameraView.setCameraIndex(0)
                     mOpenCvCameraView.enableView()
                 }
                 else -> {
@@ -55,17 +52,22 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         mOpenCvCameraView.setCvCameraViewListener(this)
 
         button_options.setOnClickListener {
-            val snackbar = Snackbar.make(it,"",Snackbar.LENGTH_SHORT)
-            snackbar.duration = 10000
-            snackbar.setAction("yes",View.OnClickListener {
-                if (mOpenCvCameraView.id == 0) {
-                    mOpenCvCameraView.setCameraIndex(1)
-                } else {
-                    mOpenCvCameraView.setCameraIndex(0)
-                }
-                snackbar.dismiss()
-            })
-            snackbar.show()
+//            val snackbar = Snackbar.make(it,"Detection type",Snackbar.LENGTH_SHORT)
+//            snackbar.duration = 10000
+//            var tDetectionType : Int
+//            var tDetectionName : String
+//            if (mDetectionType == JAVA_DETECTOR) {
+//                tDetectionType = NATIVE_DETECTOR
+//                tDetectionName = mDetectorName[tDetectionType].toString()
+//            } else {
+//                tDetectionType = JAVA_DETECTOR
+//                tDetectionName = mDetectorName[tDetectionType].toString()
+//            }
+//            snackbar.setAction(tDetectionName,View.OnClickListener {
+//                setDetectorType(tDetectionType)
+//                snackbar.dismiss()
+//            })
+//            snackbar.show()
         }
     }
 
@@ -79,10 +81,8 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
     override fun onResume() {
         super.onResume()
         if (!OpenCVLoader.initDebug()) {
-            log_d( "Internal OpenCV library not found. Using OpenCV Manager for initialization")
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_4_0, this, mLoaderCallback)
         } else {
-            log_d("OpenCV library found inside package. Using it!")
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS)
         }
     }
@@ -190,10 +190,8 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
     private fun setDetectorType (type : Int) {
         mDetectionType = type
         if (type == NATIVE_DETECTOR) {
-            log_d("Detection Based Tracker enabled")
             mNativeDetector?.start()
         } else {
-            log_d("Cascade detector enabled")
             mNativeDetector?.stop()
         }
     }

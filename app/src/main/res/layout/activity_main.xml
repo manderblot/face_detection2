@@ -22,7 +22,8 @@
     <org.opencv.android.JavaCamera2View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/camera_view" />
+        android:id="@+id/camera_view"
+        app:camera_id="any"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/button_options"

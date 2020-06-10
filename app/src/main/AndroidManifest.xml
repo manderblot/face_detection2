@@ -24,4 +24,9 @@
 
     <uses-feature android:name="android.hardware.screen.landscape" />
 
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.front" />
+    <uses-feature android:name="android.hardware.camera.front.autofocus" />
+
 </manifest>
