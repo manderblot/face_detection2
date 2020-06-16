@@ -7,10 +7,7 @@ import android.view.*
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import org.opencv.android.*
-import org.opencv.core.Mat
-import org.opencv.core.MatOfRect
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
 import java.io.*
@@ -51,23 +48,22 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         mOpenCvCameraView.visibility = CameraBridgeViewBase.VISIBLE
         mOpenCvCameraView.setCvCameraViewListener(this)
 
+        registerForContextMenu(mOpenCvCameraView)
+
         button_options.setOnClickListener {
-//            val snackbar = Snackbar.make(it,"Detection type",Snackbar.LENGTH_SHORT)
-//            snackbar.duration = 10000
-//            var tDetectionType : Int
-//            var tDetectionName : String
-//            if (mDetectionType == JAVA_DETECTOR) {
-//                tDetectionType = NATIVE_DETECTOR
-//                tDetectionName = mDetectorName[tDetectionType].toString()
-//            } else {
-//                tDetectionType = JAVA_DETECTOR
-//                tDetectionName = mDetectorName[tDetectionType].toString()
-//            }
-//            snackbar.setAction(tDetectionName,View.OnClickListener {
-//                setDetectorType(tDetectionType)
-//                snackbar.dismiss()
-//            })
-//            snackbar.show()
+            val snackbar = Snackbar.make(it,"Effect type",Snackbar.LENGTH_SHORT)
+            snackbar.duration = 10000
+            var tEffectType : Int
+            if (mEffectType == 0) {
+                tEffectType = 1
+            } else {
+                tEffectType = 0
+            }
+            snackbar.setAction(mEffectName[tEffectType],View.OnClickListener {
+                mEffectType = tEffectType
+                snackbar.dismiss()
+            })
+            snackbar.show()
         }
     }
 
@@ -130,26 +126,35 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         }
 
         val facesArray = faces.toArray()
-        var resRgba = Mat()
-        for (i in 0..facesArray.size-1) {
-            resRgba = Mat(mRgba,facesArray[i])
-            Imgproc.blur(resRgba,resRgba,Size(30.0,30.0))
+        if (mEffectType == 0) {
+            var resRgba = Mat()
+            for (i in 0..facesArray.size - 1) {
+                resRgba = Mat(mRgba, facesArray[i])
+                Imgproc.blur(resRgba, resRgba, Size(30.0, 30.0))
+            }
+            return mRgba
+        } else {
+            var resGray = Mat()
+            for (i in 0..facesArray.size - 1) {
+                resGray = Mat(mGray, facesArray[i])
+                Imgproc.Canny(resGray, resGray, 80.0, 100.0)
+                Core.bitwise_not(resGray, resGray)
 //            Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, FACE_RECT_THICKNESS)
+            }
+            return mGray
         }
-
-        return mRgba
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.main_menu,menu)
-        mItemFace50 = menu.findItem(R.id.size_50)
-        mItemFace40 = menu.findItem(R.id.size_40)
-        mItemFace30 = menu.findItem(R.id.size_30)
-        mItemFace20 = menu.findItem(R.id.size_20)
-        mItemType = menu.add(mDetectorName[mDetectionType])
-        return true
-    }
+//    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+//        val inflater: MenuInflater = menuInflater
+//        inflater.inflate(R.menu.main_menu,menu)
+//        mItemFace50 = menu.findItem(R.id.size_50)
+//        mItemFace40 = menu.findItem(R.id.size_40)
+//        mItemFace30 = menu.findItem(R.id.size_30)
+//        mItemFace20 = menu.findItem(R.id.size_20)
+//        mItemType = menu.add(mDetectorName[mDetectionType])
+//        return true
+//    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item) {
@@ -185,6 +190,16 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
             else ->
                 super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+
+
     }
 
     private fun setDetectorType (type : Int) {
@@ -316,6 +331,9 @@ class MainActivity : CameraActivity() , CameraBridgeViewBase.CvCameraViewListene
         private var mAbsoluteFaceSize : Int = 0
 
         private lateinit var mOpenCvCameraView : CameraBridgeViewBase
+
+        private var mEffectType : Int = 0
+        private val mEffectName : Array<String> = arrayOf("ぼかし","エッジ")
     }
 
 }

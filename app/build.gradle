@@ -36,9 +36,9 @@ android {
             cmake {
                 path '/media/makoto/82B8EC85B8EC78D5/android_project/face_detection2/app/src/main/cpp/CMakeLists.txt'
             }
+
         }
     }
-
 }
 
 dependencies {
